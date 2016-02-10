@@ -1,0 +1,47 @@
+
+<dom-module id="main-current">
+	<style is="custom-style">
+		:host{
+			position: absolute;
+			bottom: 15px;
+			right: 15px;
+			text-align: right;
+		}
+		span{
+			display: block;
+		}
+
+		.city, .desc, .humidity, .temp{
+			font-size: 2em;
+			font-weight: bold;
+			color: white;
+			font-family: 'Roboto','Noto';
+			text-shadow: 0px,0px,0px,5px black;
+		}
+
+		.city{font-size: 5em;}
+		.desc, .humidity,{font-weight:normal;}
+		.temp{font-size: 7em;}
+
+	</style>
+	<template>
+		<span class="humidity">{{humidity}}</span>
+		<span class="desc">{{desc}}</span>
+		<span class="city">{{city}}</span>
+		<span class="temp">{{temp}}</span>
+	 </template>
+</dom-module>
+
+<script>
+	Polymer({
+		is:'main-current',
+		properties:{
+			humidity: String,
+			temp: String,
+			desc: String,
+			city: String
+		},
+		ready: function(){}
+	});
+
+</script>

@@ -1,0 +1,32 @@
+{
+  "name": "MiTiempo",
+  "description": "Aplicacion del tiempo con Polymer",
+  "main": "index.html",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "tiempo",
+    "weather"
+  ],
+  "authors": [
+    "Daniel Medina"
+  ],
+  "license": "MIT",
+  "homepage": "index.html",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",
+    "iron-image": "PolymerElements/iron-image#^1.0.0",
+    "neon-animation": "PolymerElements/neon-animation#^1.0.0",
+    "paper-header-panel": "PolymerElements/paper-header-panel#^1.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0"
+  }
+}

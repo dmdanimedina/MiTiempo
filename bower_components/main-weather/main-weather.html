@@ -1,0 +1,140 @@
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../main-current/main-current.html">
+<link rel="import" href="../main-forecast/main-forecast.html">
+<link rel="import" href="../neon-animation/neon-animated-pages.html">
+<link rel="import" href="../neon-animation/neon-animatable.html">
+<link rel="import" href="../neon-animation/neon-animations.html">
+<dom-module id="main-weather">
+	<style is="cusmtom-style">
+		:host{
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			display: block;
+		}
+		iron-image{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			background-color: lightgrey;
+		}
+		#pages{
+			position: absolute;
+			width: 100%;
+			height: 100%;
+		}
+
+	</style>
+	<template>
+		<iron-image src="{{imageSrc}}" preload sizing="cover"></iron-image>
+		<iron-ajax
+		 	auto
+		 	url="http://api.openweathermap.org/data/2.5/weather?lat=-33.4243498&lon=-70.5837226&appid=44db6a862fba0b067b1930da0d769e98&units=metric&lang=es"
+		 	handle-as="json"
+		 	on-response="getCurrentData"></iron-ajax>
+		<iron-ajax
+		 	auto
+		 	url="http://api.openweathermap.org/data/2.5/forecast/dialy?cnt=16&mode=json&lat=-33.4243498&lon=-70.5837226&appid=44db6a862fba0b067b1930da0d769e98&units=metric&lang=es"
+		 	handle-as="json"
+		 	on-response="getForecastData"></iron-ajax>
+
+			<neon-animated-pages id="pages" class="flex" entry-animation="{{entryAnimation}}" exit-animation="{{exitAnimation}}" on-track="handleTrack">
+				<neon-animatable>
+					<main-current id="currentWeather"></main-current>
+				</neon-animatable>
+				<neon-animatable>
+					<main-forecast id="forecast"></main-forecast>
+				</neon-animatable>
+			</neon-animated-pages>
+
+		 	
+		 	
+		 	
+	 </template>
+</dom-module>
+
+<script type="text/javascript" src="moment.js"></script>
+<script type="text/javascript" src="locale/es.js"></script>
+<script>
+	Polymer({
+		is:'main-weather',
+		properties:{
+			imageSrc: String
+		},
+		ready: function(){
+			this.$.pages.selected = 0;
+			this.entryAnimation = 'slide-up-animation';
+			this.exitAnimation = 'fade-out-animation';},
+		getCurrentData:function(event){			
+			var response = event.detail.response;
+			this.imageSrc = "img/"+response.weather[0].icon+"_bg.jpg";
+			var current = this.$.currentWeather;
+
+			current.temp = Number(response.main.temp).toFixed(1)+"ºC";
+			current.humidity = Number(response.main.humidity).toFixed(1)+"%";
+			current.city = response.name;
+			current.desc = 	response.weather[0].description;
+
+
+			console.log(current)
+		},
+		getForecastData:function(event){
+			//console.log(event.detail.response)
+			var response = event.detail.response;
+			var forecast = this.$.forecast;
+			var list = response.list;
+
+			console.log(list)
+
+			for(var i = 0; i< list.length; i++){
+				list[i].icon = "img/"+list[i].weather[0].icon+".png";
+				list[i].bg = "img/"+list[i].weather[0].icon+"_bg.jpg";
+				list[i].desc = this.capitalize(list[0].weather[0].description);
+				list[i].humidity = list[i].main.humidity + '%';
+				list[i].temp_max = Number(list[i].main.temp_max).toFixed(1)+ "º";
+				list[i].temp_min = Number(list[i].main.temp_min).toFixed(1)+ "º";
+				var day = moment.unix(Number(list[i].dt));
+				list[i].date = day.format('dddd[, ]DD/MM/YYYY[ ]HH[:00]');
+
+				
+			};
+
+			forecast.list = list;
+		},
+		capitalize: function(s){
+			return s[0].toUpperCase() + s.slice(1);
+		},
+		handleTrack: function(e){
+			switch(e.detail.state) {
+				case 'start':
+					this.sizeTapped = e.detail.y;
+				//	console.log(this.sizeTapped);
+					break;
+				case 'track':
+					
+					
+					break;
+				case 'end':
+					if(this.$.pages.selected == 0){
+						if(e.detail.y < (this.sizeTapped-100)){
+
+							this.exitAnimation = 'slide-up-animation';
+							this.entryAnimation = 'fade-in-animation';
+							this.$.pages.selected = 1;
+						}
+					}
+					if(this.$.pages.selected == 1 && this.sizeTapped < 50){
+						if(e.detail.y > (this.sizeTapped+100)){
+							
+							this.exitAnimation = 'fade-out-animation';
+							this.entryAnimation = 'slide-down-animation';
+							this.$.pages.selected = 0;
+						}
+					}
+					break;
+			}
+		}
+	});
+
+</script>
